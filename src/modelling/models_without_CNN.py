@@ -16,6 +16,7 @@ from tensorflow.keras.models import load_model
 from sklearn.svm import SVR
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import RandomizedSearchCV
+from keras.losses import MeanAbsoluteError
 import itertools
 import warnings
 import pickle
@@ -136,7 +137,9 @@ class Ensamble:
         )
 
         today = datetime.now().strftime("%d-%m-%Y-%H:%M:%S")
-        self.model.save(os.path.join(output_path,'ENSEMBLE-'+today+'.h5'))
+        if not os.path.isdir(output_path):  # Corrected 'os.dir' to 'os.path.isdir'
+            os.makedirs(output_path)  # Corrected 'mkdir' to 'os.makedirs'
+        self.model.save(os.path.join(output_path,'ENSEMBLE-WITHOUT-CNN'+today+'.h5'))
         return history
 
 
@@ -177,7 +180,9 @@ class CatBoostEnsableNet:
         self.model.fit(train_pool,eval_set=val_pool)
 
         today = datetime.now().strftime("%d-%m-%Y-%H:%M:%S")
-        self.model.save_model(os.path.join(output_path,'ENSEMBLE-'+today))
+        if not os.path.isdir(output_path):  # Corrected 'os.dir' to 'os.path.isdir'
+            os.makedirs(output_path)  # Corrected 'mkdir' to 'os.makedirs'
+        self.model.save_model(os.path.join(output_path,'ENSEMBLE-WITHOUT-CNN'+today))
 
 
 class RandomForestEnsableNet:
@@ -204,7 +209,9 @@ class RandomForestEnsableNet:
         self.model.fit(x_train, y_train)
 
         today = datetime.now().strftime("%d-%m-%Y-%H:%M:%S")
-        with open(os.path.join(output_path,'RF-'+today+'.pkl'),'wb') as f:
+        if not os.path.isdir(output_path):  # Corrected 'os.dir' to 'os.path.isdir'
+            os.makedirs(output_path)  # Corrected 'mkdir' to 'os.makedirs'
+        with open(os.path.join(output_path,'RF-WITHOUT-CNN'+today+'.pkl'),'wb') as f:
             pickle.dump(self.model, f)
 
 
@@ -237,7 +244,7 @@ class LSTMNet:
         return model
 
     def load(self, path):
-        self.model = load_model(path)
+        self.model = load_model(path, custom_objects={'mae': MeanAbsoluteError()})
 
     def train(self, training, validation, output_path):
         es = EarlyStopping(monitor='val_loss', min_delta=0, patience=self.early_stopping_rounds, 
@@ -254,7 +261,9 @@ class LSTMNet:
         )
 
         today = datetime.now().strftime("%d-%m-%Y-%H:%M:%S")
-        self.model.save(os.path.join(output_path,'LSTM-'+today+'.h5'))
+        if not os.path.isdir(output_path):  # Corrected 'os.dir' to 'os.path.isdir'
+            os.makedirs(output_path)  # Corrected 'mkdir' to 'os.makedirs'
+        self.model.save(os.path.join(output_path,'LSTM-WITHOUT-CNN'+today+'.h5'))
         return history
 
 
@@ -280,7 +289,7 @@ class CatBoostNet:
             random_seed=self.seed,
             max_depth=self.max_depth,
             eval_metric=self.eval_metric,  #MAE, RMSE, MultiRMSE for multi-regression
-            verbose = True,
+            verbose = False,
             early_stopping_rounds = self.early_stopping_rounds
         )
 
@@ -295,7 +304,9 @@ class CatBoostNet:
         self.model.fit(train_pool,eval_set=val_pool)
 
         today = datetime.now().strftime("%d-%m-%Y-%H:%M:%S")
-        self.model.save_model(os.path.join(output_path,'CATBOOST-'+today))
+        if not os.path.isdir(output_path):  # Corrected 'os.dir' to 'os.path.isdir'
+            os.makedirs(output_path)  # Corrected 'mkdir' to 'os.makedirs'
+        self.model.save_model(os.path.join(output_path, 'CATBOOST-WITHOUT-CNN' + today))
 
 
 class SVMNet:
@@ -336,5 +347,5 @@ class SVMNet:
 
         today = datetime.now().strftime("%d-%m-%Y-%H:%M:%S")
 
-        with open(os.path.join(output_path,'SVM-'+today+'.pkl'),'wb') as f:
+        with open(os.path.join(output_path,'SVM-WITHOUT-CNN'+today+'.pkl'),'wb') as f:
             pickle.dump(tuned_model, f)

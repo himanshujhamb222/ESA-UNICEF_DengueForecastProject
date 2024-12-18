@@ -7,10 +7,10 @@ Dengue fever, a prevalent and rapidly spreading arboviral disease, poses substan
 
 ## Guide
 
-1. [Installation guide](guide/installation.md)
-2. [Configuration](guide/config.md)
-3. [Dataset](guide/data.md)
-3. [Run our code](guide/code.md)
+1. [Installation guide](src/guide/installation.md)
+2. [Configuration](src/guide/config.md)
+3. [Dataset](src/guide/data.md)
+3. [Run our code](src/guide/code.md)
 
 ## Cite our papers
 
